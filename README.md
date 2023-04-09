@@ -1,7 +1,7 @@
 # Coppeliasim Balance Maze
  Coppeliasim Balance Maze game의 코드입니다.
 ### 파일 구조
-Coppeliasim_maze_game
+Coppeliasim_maze_game  
  ┣ Arduino  
  ┃ ┗ send_euler_angle  
  ┃ ┃ ┣ eeprom_utils.h  
