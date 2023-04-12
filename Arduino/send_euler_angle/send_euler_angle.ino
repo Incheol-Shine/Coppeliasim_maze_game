@@ -3,7 +3,7 @@
 
 #define FRAME_START     0xAA
 #define FRAME_END       0xDD
-#define FRAME_MAX_SIZE  16
+#define FRAME_MAX_SIZE  10
 #define DEG_2_RAD       0.01745329251994329576923690768489
 #define DEAD_ZONE       3
 
@@ -11,9 +11,6 @@ typedef struct _data
 {
   float euler_x;
   float euler_y;
-  float euler_z;
-  bool  ismove;
-  bool  button;
 } DATA;
 
 const int buttonPin = 7; 
@@ -53,9 +50,6 @@ void loop() {
         if (millis() > prev_ms + 1) {
             data.euler_x = DEG_2_RAD * mpu.getEulerX();
             data.euler_y = DEG_2_RAD * mpu.getEulerY();
-            data.euler_z = -DEG_2_RAD * mpu.getEulerZ();
-            data.ismove = is_move();
-            data.button = digitalRead(buttonPin);
             write_bytes(buffer, &data);
             Serial.write(buffer, FRAME_MAX_SIZE);
             Serial.flush();
@@ -64,21 +58,9 @@ void loop() {
     }
 }
 
-bool is_move() {
-    int temp;
-    temp = fabs(mpu.getGyroX()) + fabs(mpu.getGyroY()) + fabs(mpu.getGyroZ());
-    if (temp > DEAD_ZONE)
-        return true;
-    else
-        return false;
-}
-
 void write_bytes(byte *buffer, DATA *data){
     buffer[0] = FRAME_START;
     memcpy(buffer + 1, &data->euler_x, 4);
     memcpy(buffer + 5, &data->euler_y, 4);
-    memcpy(buffer + 9, &data->euler_z, 4);
-    buffer[13] = data->ismove;
-    buffer[14] = data->button;
-    buffer[15] = FRAME_END;
+    buffer[10] = FRAME_END;
 }
